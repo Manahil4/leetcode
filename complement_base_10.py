@@ -4,45 +4,32 @@
 # Given an integer n, return its complement
 
 # _________________________________________Q solution______________________________________#
-
-
-# reverse int bit and return corresponding int value against that bits 
-# Not operator :not all bits in given int eg101->010 but every no is 32 or 64 bit longer for int 5 in binary is 29 0's and then 101 if i not it i get 29 1's ans then 010 which is 2 but i don't want these starting 1s 
-# i can and the 'not value' with the union of input integer value with its not version so i get 29 0's at the start and 010 at last 3 bits so automatically it will translate into int 2
-
-# class Solution(object):
-#     def complement_int_of_base10(self, n):
-#         not_of_n=~n#29 bits containing 1's,then 010
-#         mask=n | not_of_n#29 bits containing 0's and 101 OR 29 bits containing 1's and 010 . result in 29 bits containing 1's and 111.(means all 1s)
-#         ans=mask & not_of_n#all ones and 29 1's and 010->29 0s and 010
-#         return ans
-# a=Solution()  
-# output=a.complement_int_of_base10(5)
-# print(output)
-# # 101->
-# # 110->11111111010
 class Solution(object):
     def bitwiseComplement(self, n):
-        if n == 0:
-            return 1  # Special case: complement of 0 is 1
+        # Calculate the bitwise complement of n by flipping all its bits
+        not_of_n = ~n  # Inverts all the bits of n
+
+        # Initialize m to hold a copy of n
+        m = n
         
-        num = 0
-        i = 0
+        # Initialize the mask with all bits set to 0
+        mask = 0
+        
+        # If n is 0, the bitwise complement will be 1 (special case)
+        if n == 0:
+            mask = (mask << 1) | 1  # Set the rightmost bit of the mask to 1
+        
+        else:
+            # Find the appropriate mask length
+            while n != 0:
+                mask = (mask << 1) | 1  # Shifts mask one position to the left and sets the rightmost bit to 1
+                n = n >> 1             # Shifts n one position to the right
+        
+        # Perform bitwise AND operation between the mask and the bitwise complement of n
+        ans = mask & not_of_n  # Retains only the bits where both mask and not_of_n have a 1
 
-        while n != 0:
-            bit = n & 1              # Extracting the least significant bit
-            rev = bit ^ 1            # Computing the complement of the extracted bit
-            n = n >> 1               # Right shifting n to get the next bit
+        return ans
 
-            if rev == 1:
-                num += 2 ** i * rev  # Adding the complemented bit to the result
-
-            i += 1                   # Incrementing the position counter
-
-        return num                  # Returning the complemented number
-
-# Test
-a = Solution()  
-output = a.bitwiseComplement(0)
-print(output)  # Output: 1
-
+a = Solution()
+output = a.bitwiseComplement(5)
+print(output)  # Output will be 2, which is the bitwise complement of 5 (101), resulting in 010
