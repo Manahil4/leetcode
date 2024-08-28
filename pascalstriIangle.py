@@ -1,6 +1,7 @@
 n8=int( input("number to repeat pattern" ))
 rowl=[]
 res=[]
+temp=[]
 for row in range(1,n8+1) :
     temp=[0]+res[-1]+[0]
     for col in range (len(res[-1])+1 ):
