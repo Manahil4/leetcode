@@ -38,3 +38,6 @@ numCourses = 4
 prerequisites = [[1, 0], [2, 1], [3, 2]]
 solution = Solution()
 print(solution.canFinish(numCourses, prerequisites))  # Output: True
+# for course shedule code
+# algo;
+# make a dictionary o r ahash map for storing eah course with value of prerequisites course , from given input  [[0,1],[1,3],[3,4],[0,2]] here 0 is dependent on all courses and overall all courses can be taken . courses as given in list on left are place as key(course name) while on right side are as value(pre requisite of that course) . then use dfs approach , iterate through dictionary , see course and put it in VisitSet( a set initialize for storing visit courses) and then see its prerequisite( now consider it as course and repeat above process means put it in visitset and search it pre requisite this repeats till if any course have no any  prerequisite so returning back to course that depend on that prereuisite you see we iterate in dfs approach means go down till leaf node but now after  returning back check for any other sucessor means any other prerequisite then repeat above process )  
