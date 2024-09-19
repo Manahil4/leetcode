@@ -1,0 +1,156 @@
+Let's break down this BFS implementation step by step and explain how it works.
+
+### The Graph Structure:
+
+The graph is represented as a **dictionary** where:
+- Keys are **nodes** (like 'A', 'M', etc.)
+- Values are **lists of adjacent nodes** (neighbors of the current node).
+
+```python
+graph = {'A': ['M', 'P'],
+         'M': ['A', 'N'],
+         'N': ['M', 'B'],
+         'P': ['A', 'B'],
+         'B': ['P', 'N']}
+```
+
+So, the graph looks like this:
+
+- **A** is connected to **M** and **P**.
+- **M** is connected to **A** and **N**.
+- **N** is connected to **M** and **B**.
+- **P** is connected to **A** and **B**.
+- **B** is connected to **P** and **N**.
+
+### BFS Function:
+
+Let's focus on the BFS function:
+
+```python
+def bfs(start, goal, graph):
+    queue = deque([start])
+    visited = {start: None}
+
+    while queue:
+        cur_node = queue.popleft()
+        if cur_node == goal:
+            break
+
+        next_nodes = graph[cur_node]
+        for next_node in next_nodes:
+            if next_node not in visited:
+                queue.append(next_node)
+                visited[next_node] = cur_node
+    return visited
+```
+
+#### 1. **Initialization:**
+- `queue = deque([start])`: 
+  - The **queue** stores the nodes that need to be explored, starting with the `start` node ('A' in this case). In the first iteration, `queue` contains just the `start` node `['A']`.
+  
+- `visited = {start: None}`: 
+  - The **visited** dictionary keeps track of the nodes that have been visited. It also stores the **parent node** of each visited node (the node that led to it). Initially, it contains the `start` node (`'A'`), with its parent set to `None` because it’s the starting point.
+
+#### 2. **While Loop:**
+
+- The loop runs while there are nodes in the **queue** to explore.
+
+##### First Iteration:
+- `cur_node = queue.popleft()`:
+  - In the first iteration, `cur_node` becomes `'A'` because that’s the only node in the queue. Now, `queue` is empty.
+  
+- `if cur_node == goal`: 
+  - This checks if the current node (`'A'`) is the goal node (`'B'`). It’s not, so the algorithm continues.
+
+- `next_nodes = graph[cur_node]`: 
+  - This retrieves the neighbors of the current node (`'A'`). In the graph, `'A'` has neighbors `'M'` and `'P'`. So `next_nodes = ['M', 'P']`.
+
+##### Processing Neighbors:
+- The **for loop** processes each neighbor of `'A'`:
+  - First, **`next_node = 'M'`**:
+    - `'M'` is not in `visited`, so it gets added to the queue and marked as visited. `queue = ['M']` and `visited = {'A': None, 'M': 'A'}`.
+    
+  - Next, **`next_node = 'P'`**:
+    - `'P'` is not in `visited`, so it gets added to the queue and marked as visited. `queue = ['M', 'P']` and `visited = {'A': None, 'M': 'A', 'P': 'A'}`.
+
+##### Second Iteration:
+- In the second iteration of the loop:
+  - `cur_node = queue.popleft()` removes the first node from the queue, which is `'M'`. So `cur_node = 'M'` and `queue = ['P']`.
+  
+  - `next_nodes = graph['M']` retrieves the neighbors of `'M'`, which are `['A', 'N']`.
+
+- Processing `'M'`’s neighbors:
+  - **`next_node = 'A'`**:
+    - `'A'` is already in `visited`, so it’s ignored.
+    
+  - **`next_node = 'N'`**:
+    - `'N'` is not in `visited`, so it’s added to the queue and marked as visited. `queue = ['P', 'N']` and `visited = {'A': None, 'M': 'A', 'P': 'A', 'N': 'M'}`.
+
+##### Third Iteration:
+- Now, `cur_node = queue.popleft()` removes the next node from the queue, which is `'P'`. So `cur_node = 'P'` and `queue = ['N']`.
+
+- `next_nodes = graph['P']` retrieves the neighbors of `'P'`, which are `['A', 'B']`.
+
+- Processing `'P'`’s neighbors:
+  - **`next_node = 'A'`**:
+    - `'A'` is already in `visited`, so it’s ignored.
+    
+  - **`next_node = 'B'`**:
+    - `'B'` is not in `visited`, so it’s added to the queue and marked as visited. `queue = ['N', 'B']` and `visited = {'A': None, 'M': 'A', 'P': 'A', 'N': 'M', 'B': 'P'}`.
+
+##### Fourth Iteration:
+- Now, `cur_node = queue.popleft()` removes `'N'`, so `cur_node = 'N'` and `queue = ['B']`.
+- Since `'N'` is not the goal, it proceeds, but its neighbors (`'M'` and `'B'`) are already visited, so nothing is added to the queue.
+
+##### Fifth Iteration:
+- Finally, `cur_node = queue.popleft()` removes `'B'`, so `cur_node = 'B'`.
+- Since `cur_node == goal`, the loop breaks and the search ends.
+
+### What is `graph[cur_node]`?
+
+The expression `graph[cur_node]` accesses the neighbors (adjacent nodes) of the current node. For example:
+- `graph['A']` returns `['M', 'P']`, which are the neighbors of node 'A'.
+- `graph['M']` returns `['A', 'N']`, which are the neighbors of node 'M'.
+
+The `next_nodes` variable stores the list of neighbors of the current node.
+
+### How does `visited` work?
+
+The `visited` dictionary keeps track of the nodes that have been visited. For each visited node, it stores the **node from which it was reached** (its parent).
+
+For example:
+- After visiting node `'M'`, the `visited` dictionary would record `visited['M'] = 'A'`, meaning `'M'` was reached from `'A'`.
+
+This helps reconstruct the path from the goal back to the start.
+
+### Reconstructing the Path:
+
+After BFS is done, the `visited` dictionary contains the information needed to reconstruct the path from the goal (`'B'`) back to the start (`'A'`).
+
+```python
+cur_node = goal
+print(f'\npath from {goal} to {start}: \n {goal} ', end='')
+while cur_node != start:
+    cur_node = visited[cur_node]
+    print(f'---> {cur_node} ', end='')
+```
+
+This part works by:
+1. Starting from the goal (`'B'`).
+2. Looking up the parent of `'B'` in `visited` (`'B'` was reached from `'P'`).
+3. Moving to `'P'`, and then to `'A'` (the start).
+
+This gives the path: **B ---> P ---> A**.
+
+### Final Output:
+
+The path from `'B'` to `'A'` is printed as:
+```
+path from B to A: 
+ B ---> P ---> A
+```
+
+### Conclusion:
+- BFS explores the graph level by level, ensuring that the shortest path (in terms of number of edges) is found.
+- The **queue** ensures that we process nodes in the correct order (FIFO).
+- The **visited** dictionary helps track which nodes have been explored and keeps a record of how we reached each node (which helps in path reconstruction).
